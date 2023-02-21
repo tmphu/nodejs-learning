@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <h1>Client</h1>
+    <h2 id="client-id"></h2>
+    <h2 id="chat-content"></h2>
+    <textarea name="" id="txt-chat" cols="50" rows="2"></textarea>
+    <button id="btn-send">Send</button>
+    <script
+      src="https://cdn.socket.io/4.6.0/socket.io.min.js"
+      integrity="sha384-c79GN5VsunZvi+Q/WObgk2in0CbZsHnjEqvFxC5DxHn9lTfNce2WW6h2pH6u/kF+"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      const socket = io('ws://localhost:8080');
+      socket.on('client-connected', (data) => {
+        document.getElementById('client-id').innerHTML +=
+          data + ' đã kết nối <br />';
+      });
+      socket.on('client-disconnected', (data) => {
+        document.getElementById('client-id').innerHTML +=
+          data + ' đã ngắt kết nối <br />';
+      });
+
+      document.getElementById('btn-send').onclick = () => {
+        let msg = document.getElementById('txt-chat').value;
+        socket.emit('send-chat', msg);
+      };
+
+      socket.on('send-chat', ({ id, msg }) => {
+        document.getElementById('chat-content').innerHTML +=
+          id + ' đã chat: ' + msg + '<br />';
+      });
+    </script>
+  </body>
+</html>
